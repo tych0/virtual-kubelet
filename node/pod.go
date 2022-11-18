@@ -254,6 +254,11 @@ func (pc *PodController) updatePodStatus(ctx context.Context, podFromKubernetes 
 		"old reason": podFromKubernetes.Status.Reason,
 	}).Debug("Updated pod status in kubernetes")
 
+	if err := pc.provider.UpdatePod(ctx, podFromProvider); err != nil {
+		span.SetStatus(err)
+		return pkgerrors.Wrap(err, "error while updating pod status in kubernetes")
+	}
+
 	return nil
 }
 
